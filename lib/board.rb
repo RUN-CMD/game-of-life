@@ -3,7 +3,10 @@ class Board
   attr_reader :cells, :row_count, :column_count
 
   def initialize(opts = {})
-    opts.merge(self.default_options)
+    opts.merge(Board.default_options).tap do |opts|
+      @row_count = opts[:row_count]
+      @column_count = opts[:column_count]
+    end
     @cells = build_cells
   end
 
@@ -14,8 +17,8 @@ class Board
   # cells are created in order by column left-to-right
   # and then row top-to-bottom
   def build_cells
-    row_count.times do |row_index|
-      column_count.times do |column_index|
+    self.row_count.times do |row_index|
+      self.column_count.times do |column_index|
         cells << Cell.new({
           :row_count => row_index,
           :column_count => column_index,
@@ -24,14 +27,6 @@ class Board
     end
   end
   private :build_cells
-
-  def self.default_options
-    {
-      :row_count => 20,
-      :column_count => 55,
-    }
-  end
-  private :default_options
 
   def index_by_row_and_column(row_index, column_index)
     row_index * column_count + column_index
@@ -62,6 +57,15 @@ class Board
       end
       puts "\n"
     end
+  end
+
+  private
+
+  def self.default_options
+    {
+      :row_count => 20,
+      :column_count => 55,
+    }
   end
 
   class BoardWalkerAbstract
